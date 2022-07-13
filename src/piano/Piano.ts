@@ -8,7 +8,7 @@ import { Keybed } from './Keybed'
 import { Pedal } from './Pedal'
 import { PianoStrings } from './Strings'
 
-type ToneAudioNodeOptions = import('tone/build/esm/core/context/ToneAudioNode').ToneAudioNodeOptions
+import type { ToneAudioNodeOptions } from 'tone/build/esm/core/context/ToneAudioNode'
 
 export interface PianoOptions extends ToneAudioNodeOptions {
 	/**
