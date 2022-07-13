@@ -1,41 +1,42 @@
 import { EventEmitter } from 'events'
 import { WebMidi, Input } from 'webmidi'
 
-type NoteEventType = 'keyDown' | 'keyUp';
-type PedalEventType = 'pedalDown' | 'pedalUp';
+type NoteEventType = 'keyDown' | 'keyUp'
+type PedalEventType = 'pedalDown' | 'pedalUp'
 type ConnectionEventType = 'connect' | 'disconnect'
 
 interface DeviceData {
-	id: string;
-	manufacturer: string;
-	name: string;
+	id: string
+	manufacturer: string
+	name: string
 }
 
 interface MidiEvent {
-	device: DeviceData;
+	device: DeviceData
 }
 
 interface NoteEvent extends MidiEvent {
-	note: string;
-	midi: number;
-	velocity: number;
+	note: string
+	midi: number
+	velocity: number
 }
 
-type ConditionalEmitter<EventType> =
-	EventType extends PedalEventType ? MidiEvent :
-	EventType extends ConnectionEventType ? DeviceData :
-	EventType extends NoteEventType ? NoteEvent : unknown;
+type ConditionalEmitter<EventType> = EventType extends PedalEventType
+	? MidiEvent
+	: EventType extends ConnectionEventType
+	? DeviceData
+	: EventType extends NoteEventType
+	? NoteEvent
+	: unknown
 
-type ConditionalListener<EventType> = (e: ConditionalEmitter<EventType>) => void;
-
+type ConditionalListener<EventType> = (e: ConditionalEmitter<EventType>) => void
 
 export class MidiInput extends EventEmitter {
-
 	/**
 	 * The device ID string. If set to 'all', will listen
 	 * to all MIDI inputs. Otherwise will filter a specific midi device
 	 */
-	deviceId: string | 'all';
+	deviceId: string | 'all'
 
 	constructor(deviceId: string | 'all' = 'all') {
 		super()
@@ -57,19 +58,17 @@ export class MidiInput extends EventEmitter {
 			})
 
 			// add all of the existing inputs
-			WebMidi.inputs.forEach(input => this._addListeners(input));
+			WebMidi.inputs.forEach((input) => this._addListeners(input))
 		})
 	}
-
 
 	/**
 	 * Attach listeners to the device when it's connected
 	 */
 	private _addListeners(device: Input): void {
-
 		if (!MidiInput.connectedDevices.has(device.id)) {
 			MidiInput.connectedDevices.set(device.id, device)
-			this.emit('connect', this._inputToDevice(device));
+			this.emit('connect', this._inputToDevice(device))
 
 			device.addListener('noteon', (event) => {
 				if (this.deviceId === 'all' || this.deviceId === device.id) {
@@ -102,7 +101,6 @@ export class MidiInput extends EventEmitter {
 				}
 			})
 		}
-
 	}
 
 	private _inputToDevice(input: Input): DeviceData {
@@ -119,7 +117,7 @@ export class MidiInput extends EventEmitter {
 	private _removeListeners(event: { id: string }): void {
 		if (MidiInput.connectedDevices.has(event.id)) {
 			const device = MidiInput.connectedDevices.get(event.id)
-			this.emit('disconnect', this._inputToDevice(device));
+			this.emit('disconnect', this._inputToDevice(device))
 			MidiInput.connectedDevices.delete(event.id)
 			device.removeListener('noteon')
 			device.removeListener('noteoff')
@@ -141,7 +139,7 @@ export class MidiInput extends EventEmitter {
 		listener: ConditionalListener<EventType>
 	): this {
 		super.on(event, listener)
-		return this;
+		return this
 	}
 
 	once<EventType extends PedalEventType | ConnectionEventType | NoteEventType>(
@@ -149,7 +147,7 @@ export class MidiInput extends EventEmitter {
 		listener: ConditionalListener<EventType>
 	): this {
 		super.once(event, listener)
-		return this;
+		return this
 	}
 
 	off<EventType extends PedalEventType | ConnectionEventType | NoteEventType>(
@@ -157,14 +155,14 @@ export class MidiInput extends EventEmitter {
 		listener: ConditionalListener<EventType>
 	): this {
 		super.off(event, listener)
-		return this;
+		return this
 	}
 
 	// STATIC
 
 	private static connectedDevices: Map<string, Input> = new Map()
 
-	private static _isEnabled = false;
+	private static _isEnabled = false
 
 	/**
 	 * Resolves when the MIDI Input is enabled and ready to use
@@ -180,7 +178,7 @@ export class MidiInput extends EventEmitter {
 	 * Get a list of devices that are currently connected
 	 */
 	static async getDevices(): Promise<DeviceData[]> {
-		await MidiInput.enabled();
-		return WebMidi.inputs;
+		await MidiInput.enabled()
+		return WebMidi.inputs
 	}
 }
