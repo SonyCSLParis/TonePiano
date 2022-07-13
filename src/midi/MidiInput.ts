@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import WebMidi, { Input } from 'webmidi'
+import { WebMidi, Input } from 'webmidi'
 
 type NoteEventType = 'keyDown' | 'keyUp';
 type PedalEventType = 'pedalDown' | 'pedalUp';
@@ -71,28 +71,28 @@ export class MidiInput extends EventEmitter {
 			MidiInput.connectedDevices.set(device.id, device)
 			this.emit('connect', this._inputToDevice(device));
 
-			device.addListener('noteon', 'all', (event) => {
+			device.addListener('noteon', (event) => {
 				if (this.deviceId === 'all' || this.deviceId === device.id) {
 					this.emit('keyDown', {
 						note: `${event.note.name}${event.note.octave}`,
 						midi: event.note.number,
-						velocity: event.velocity,
+						velocity: event.rawValue,
 						device: this._inputToDevice(device)
 					})
 				}
 			})
-			device.addListener('noteoff', 'all', (event) => {
+			device.addListener('noteoff', (event) => {
 				if (this.deviceId === 'all' || this.deviceId === device.id) {
 					this.emit('keyUp', {
 						note: `${event.note.name}${event.note.octave}`,
 						midi: event.note.number,
-						velocity: event.velocity,
+						velocity: event.rawValue,
 						device: this._inputToDevice(device)
 					})
 				}
 			})
 
-			device.addListener('controlchange', 'all', (event) => {
+			device.addListener('controlchange', (event) => {
 				if (this.deviceId === 'all' || this.deviceId === device.id) {
 					if (event.controller.name === 'holdpedal') {
 						this.emit(event.value ? 'pedalDown' : 'pedalUp', {
@@ -171,16 +171,8 @@ export class MidiInput extends EventEmitter {
 	 */
 	static async enabled(): Promise<void> {
 		if (!MidiInput._isEnabled) {
-			await new Promise((done, error) => {
-				WebMidi.enable((e) => {
-					if (e) {
-						error(e)
-					} else {
-						MidiInput._isEnabled = true
-						done()
-					}
-				})
-			})
+			await WebMidi.enable()
+			MidiInput._isEnabled = true
 		}
 	}
 
