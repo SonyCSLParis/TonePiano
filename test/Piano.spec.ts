@@ -1,28 +1,23 @@
-import { Piano } from '../build'
+import { Piano } from '../src/piano/Piano'
 
 describe('Piano', () => {
 	context('can be constructed', () => {
-		it('no arguments', () => {
+		it('with no arguments', () => {
 			const piano = new Piano()
 		})
 
-		it('velocity layers', () => {
+		it('with velocity layers', () => {
 			const piano = new Piano({
 				velocities: 4,
 			})
 		})
+	})
 
-		it('velocity layers', () => {
-			const piano = new Piano({
-				velocities: 4,
-			})
-		})
 
-		it('inherits from Tone.js', () => {
-			const piano = new Piano({
-				velocities: 1,
-			}).toDestination()
-		})
+	it('inherits from Tone.js', () => {
+		const piano = new Piano({
+			velocities: 1,
+		}).toDestination()
 	})
 
 	context('loads', () => {

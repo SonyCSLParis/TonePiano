@@ -3,17 +3,18 @@
 	"version": "0.2.0",
 	"description": "Web Audio instrument using Salamander Grand Piano samples",
 	"repository": {
-	  "url": "https://github.com/tambien/Piano"
+		"url": "https://github.com/tambien/Piano"
 	},
+	"type": "commonjs",
 	"main": "build/Piano.js",
-	"module": "build/esm/Piano.js",
-	"types": "build/esm/Piano.d.ts",
+	"module": "build/piano/Piano.js",
+	"types": "build/piano/Piano.d.ts",
 	"scripts": {
 		"build": "tsc",
 		"prepare": "npm run build",
 		"increment": "npm version v$(semver --increment $(npm show @tonejs/piano version)) --git-tag-version=false --allow-same-version",
 		"lint": "tslint --project tsconfig.json --fix",
-		"test": "karma start test/karma.conf.js",
+		"test": "karma start test/karma.conf.ts",
 		"watch": "tsc --watch"
 	},
 	"files": [
@@ -26,22 +27,37 @@
 	"author": "Yotam Mann",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/chai": "^4.2.11",
-		"@types/mocha": "^7.0.2",
-		"@types/node": "^12.6.2",
-		"chai": "^4.2.0",
-		"karma": "^5.0.2",
-		"karma-chrome-launcher": "^3.1.0",
-		"karma-mocha": "^2.0.0",
-		"karma-typescript": "^5.0.2",
-		"mocha": "^7.1.1",
+		"@types/chai": "^4.3.1",
+		"@types/karma": "^6.3.3",
+		"@types/mocha": "^9.1.1",
+		"@types/node": "^17.0.39",
+		"@types/webpack": "^5.28.0",
+		"chai": "^4.3.6",
+		"karma": "^6.3.20",
+		"karma-chrome-launcher": "^3.1.1",
+		"karma-coverage": "^2.2.0",
+		"karma-mocha": "^2.0.1",
+		"karma-spec-reporter": "^0.0.34",
+		"karma-typescript": "^5.5.3",
+		"karma-typescript-es6-transform": "^5.5.3",
+		"karma-webpack": "^5.0.0",
+		"mocha": "^10.0.0",
 		"npm-run-all": "^4.1.5",
-		"semver": "^5.5.0",
+		"nyc": "^15.1.0",
+		"puppeteer": "^14.2.1",
+		"semver": "^7.3.7",
 		"static-server": "^2.2.1",
+		"tone": "^14.7.77",
+		"ts-loader": "^9.3.0",
+		"ts-node": "^10.8.1",
+		"tslint": "^6.1.3",
+		"typescript": "^4.7.3",
 		"webmidi": "^3.0.20",
+		"webpack": "^5.73.0",
+		"webpack-cli": "^4.9.2"
 	},
 	"peerDependencies": {
-		"tone": "^14.6.1",
+		"tone": "^14.7.77",
 		"webmidi": "^3.0.20"
 	},
 	"keywords": [
@@ -51,6 +67,11 @@
 		"Sampler"
 	],
 	"dependencies": {
-		"tslib": "^1.11.1"
+		"@types/karma-mocha": "^1.3.1",
+		"events": "^3.3.0",
+		"tslib": "^2.4.0"
+	},
+	"mocha": {
+		"timeout": "10000"
 	}
 }

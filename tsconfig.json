@@ -8,6 +8,12 @@
 		"declaration": true,
 		"baseUrl": "./"
 	},
+	"ts-node": {
+		"compilerOptions": {
+			// required for using TypeScript for webpack config file
+      "module": "CommonJS"
+    }
+  },
 	"include": [
 		"./src"
 	]
